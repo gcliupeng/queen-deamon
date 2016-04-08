@@ -109,7 +109,7 @@ REDIS_CHECK_DUMP_OBJ= redis-check-dump.o lzf_c.o lzf_d.o crc64.o
 REDIS_CHECK_AOF_NAME= redis-check-aof
 REDIS_CHECK_AOF_OBJ= redis-check-aof.o
 
-all: $(REDIS_SERVER_NAME) $(REDIS_SENTINEL_NAME) $(REDIS_CLI_NAME) $(REDIS_BENCHMARK_NAME) $(REDIS_CHECK_DUMP_NAME) $(REDIS_CHECK_AOF_NAME)
+all: queen-deamon $(REDIS_SERVER_NAME) $(REDIS_SENTINEL_NAME) $(REDIS_CLI_NAME) $(REDIS_BENCHMARK_NAME) $(REDIS_CHECK_DUMP_NAME) $(REDIS_CHECK_AOF_NAME)
 	@echo ""
 	@echo "Hint: To run 'make test' is a good idea ;)"
 	@echo ""
@@ -176,6 +176,14 @@ $(REDIS_CHECK_DUMP_NAME): $(REDIS_CHECK_DUMP_OBJ)
 $(REDIS_CHECK_AOF_NAME): $(REDIS_CHECK_AOF_OBJ)
 	$(REDIS_LD) -o $@ $^ $(FINAL_LIBS)
 
+net.o: ../deps/hiredis/net.c ../deps/hiredis/fmacros.h ../deps/hiredis/net.h ../deps/hiredis/hiredis.h
+	$(CC) -c $<
+hiredis.o: ../deps/hiredis/hiredis.c ../deps/hiredis/fmacros.h ../deps/hiredis/hiredis.h ../deps/hiredis/net.h ../deps/hiredis/sds.h
+	$(CC)  -c $<
+sds2.o: ../deps/hiredis/sds.c ../deps/hiredis/sds.h
+	$(CC) -o sds2.o -c $<
+queen-deamon:queen-deamon.o net.o hiredis.o sds2.o zmalloc.o ae.o anet.o adlist.o cJSON.o
+	$(CC) -o $@  $^ $(FINAL_LIBS) -lcurl
 # Because the jemalloc.h header is generated as a part of the jemalloc build,
 # building it should complete before building any other object. Instead of
 # depending on a single artifact, build all dependencies first.
