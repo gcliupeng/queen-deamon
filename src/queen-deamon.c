@@ -52,7 +52,8 @@ void parseOptions(int argc, const char **argv) {
             return ;
         }
     }
-    invalid:
+    return;
+invalid:
     printf("Invalid option \"%s\" or option argument missing\n\n",argv[i]);
 
 usage:
