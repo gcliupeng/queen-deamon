@@ -38,7 +38,10 @@ void parseOptions(int argc, const char **argv) {
         } else if (!strcmp(argv[i],"-p")) {
             if (lastarg) goto invalid;
             hostport = atoi(argv[++i]);
-        }  else if (!strcmp(argv[i],"--help")) {
+        } else if (!strcmp(argv[i],"-k")){
+	    if (lastarg) goto invalid;
+	    queen_key=argv[++i];
+	} else if (!strcmp(argv[i],"--help")) {
             exit_status = 0;
             goto usage;
         } else {
@@ -54,7 +57,7 @@ void parseOptions(int argc, const char **argv) {
 
 usage:
     printf(
-"Usage: queen-daemon [-h <host>] [-p <port>] [-c <cocurrent>] \n\n"
+"Usage: queen-daemon [-h <host>] [-p <port>] [-c <cocurrent>] [-k <queen_key>]\n\n"
 " -h <hostname>      Server hostname (default 127.0.0.1)\n"
 " -p <port>          Server port (default 6379)\n"
 " -c <cocurrent>     Number of cocurrent (default 10)\n"
@@ -183,7 +186,8 @@ void *queen_maintenance_thread(void *arg){
         curl_easy_cleanup(curl_handle);
         return NULL;
 } 
-int main(void) {
+int main(int argc,char ** argv) {
+    parseOptions(argc,argv);
     struct timeval timeout = { 1, 500000 }; // 1.5 seconds
     c = redisConnectWithTimeout(hostip, hostport, timeout);
     if (c->err) {
