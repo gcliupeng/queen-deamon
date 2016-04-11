@@ -73,8 +73,14 @@ usage:
     exit(exit_status);
 }
 int eventLoop()
-{	
-	unsigned int j;
+{
+    //如果队列数据过多，推出
+    pthread_mutex_lock(&mutex);
+    if(queen_list->len>5000){
+    	pthread_mutex_unlock(&mutex);
+    	return 1000;
+   	}	
+    unsigned int j;
     redisReply *reply;
 	int max=(int)time(NULL);
     reply = (redisReply*) redisCommand(c,"zrange mylist 0 %d",max);
