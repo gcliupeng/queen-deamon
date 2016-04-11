@@ -79,7 +79,8 @@ int eventLoop()
     if(queen_list->len>5000){
     	pthread_mutex_unlock(&mutex);
     	return 1000;
-   	}	
+   	}
+    pthread_mutex_unlock(&mutex);	
     unsigned int j;
     redisReply *reply;
 	int max=(int)time(NULL);
