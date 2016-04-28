@@ -1,2 +1,9 @@
-#一个依据redis的队列系统
+一个依据redis的队列系统
+
 主要实现：数据以json格式存储于redis的range里，守护进程每秒zrange queen 0 time（），取出来数据、解析、发送请求。
+
+主要特点：多线程处理获取的数据，线程数可配；支持post/get请求；支持请求带参数；使用了hiredis连接redis，使用redis自带的ae事件循环。
+
+安装： git clone；make & make install
+
+使用：cd /src; ./queen-deamon -h
