@@ -1,1 +1,2 @@
-
+#一个依据redis的队列系统
+主要实现：数据以json格式存储于redis的range里，守护进程每秒zrange queen 0 time（），取出来数据、解析、发送请求。
